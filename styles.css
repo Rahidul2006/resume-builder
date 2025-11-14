@@ -1,0 +1,25 @@
+* { box-sizing: border-box; }
+body { font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; background: #f3f4f6; margin:0; padding:20px; }
+.layout { display: grid; grid-template-columns: 320px 1fr; gap:20px; max-width:1200px; margin:0 auto; }
+.controls { background: #fff; padding:16px; border-radius:12px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); position:sticky; top:20px; height: calc(100vh - 40px); overflow:auto; }
+.controls h2 { margin:0 0 12px 0; font-size:18px }
+.controls h3 { margin:12px 0 6px 0; font-size:14px }
+.field-list input, .field-list textarea, .controls input, .controls textarea { width:100%; padding:8px; margin-bottom:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:13px }
+.controls .skill-row { display:flex; gap:8px; align-items:center }
+.controls .skill-row input { flex:1 }
+.controls .skill-row button { padding:6px 8px }
+.controls .controls-row { display:flex; gap:8px }
+.controls .bottom-buttons { display:flex; gap:8px; margin-top:12px }
+.controls button { background:#2563eb; color:#fff; border:none; padding:8px 12px; border-radius:8px; cursor:pointer }
+.controls button:nth-child(2) { background:#e5e7eb; color:#111 }
+.preview { background: transparent; }
+.resume { background:#fff; padding:28px; border-radius:12px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); max-width:800px; margin:0 auto; color:#111 }
+.resume-header h1 { margin:0; font-size:26px }
+.header-meta { display:flex; justify-content:space-between; color:#6b7280; font-size:13px; margin-top:8px }
+hr { border:none; border-top:1px solid #e5e7eb; margin:18px 0 }
+h4 { margin:6px 0; font-size:13px }
+ul { padding-left:18px }
+.muted { color:#6b7280; font-size:13px }
+.code-link a { color:#2563eb; font-size:13px }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } .controls { position: static; height: auto } }
+@media print { body { padding:0 } .controls { display:none } .resume { box-shadow:none; border-radius:0; margin:0; padding:12px } }
