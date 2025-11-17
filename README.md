@@ -1,8 +1,10 @@
-Resume Buildee — Demo
+# Resume Builder
 
-What this is
-- A small, self-contained demo of a Resume Builder React component (JSX) exported as a browser demo using CDN React + Babel.
-- Files in this folder:
+**Resume Builder** — a fast, easy, and customizable web app to create professional resumes/CVs using templates and AI-assisted content suggestions.
+
+> Build a resume in minutes, export to PDF, and customize templates to match your style.
+
+## Files in this folder:
   - `index.html` — demo page that loads `app.jsx` via Babel in the browser.
   - `app.jsx` — main React component (ResumeBuilder) built to run in the browser.
   - `styles.css` — minimal stylesheet for layout and print styles.
@@ -10,13 +12,35 @@ What this is
   - `package.json` — contains `npm run vdev` to start the server.
   - `tempCodeRunnerFile_backup.jsx` — backup of the original JSX source.
 
-Removed / cleaned files
-- `tempCodeRunnerFile.javascript` was a leftover file containing JSX which caused errors when accidentally executed with `node`. It has been removed to avoid accidental runtime errors. The original content is preserved in `tempCodeRunnerFile_backup.jsx`.
 
-How to run
-- Quick (open file):
-  - Double-click `index.html` or open it with your browser.
-- Recommended (serve locally so links and module-like behavior work reliably):
+## 🛠️ Tech Stack
+
+- Frontend: React  
+- Styling: Tailwind CSS ,CSS3
+
+
+---
+
+## 🔧 Local Setup
+
+> Update these commands to match your project (npm / pnpm / yarn)
+
+```bash
+# clone repo
+git clone https://github.com/<your-username>/resume-builder.git
+cd resume-builder
+
+# install deps
+npm install
+
+# run dev server
+npm run dev
+
+# build for production
+npm run build
+```
+
+ ## Recommended (serve locally so links and module-like behavior work reliably):
   1. Open PowerShell in this project folder.
   2. Run the dev server:
 
@@ -26,10 +50,16 @@ How to run
   ```
 
   3. Open http://localhost:3000 in your browser.
+## 🧩 Usage
 
-Notes
-- This demo uses Babel in the browser (development convenience). For production or development, convert to a proper React build (Vite / CRA) and install dependencies.
-- If you want me to convert this into a full create-react-app / Vite project (with Tailwind), I can scaffold that and add build scripts.
+Open the app in your browser (http://localhost:3000 or shown by your dev server).
 
-Contact
-- If anything doesn't start, tell me the exact terminal output and I'll fix it.
+Choose a template.
+
+Edit sections: Contact, Summary, Experience, Education, Skills, Projects.
+
+Use “Export → PDF” to download your resume.
+
+
+
+
