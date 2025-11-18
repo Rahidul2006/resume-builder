@@ -1,0 +1,139 @@
+.resume-builder-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background: #f5f5f5;
+}
+
+.preview {
+  flex: 1;
+  overflow-y: auto;
+  background: white;
+  padding: 20px;
+}
+
+.template-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.template-btn {
+  padding: 10px 20px;
+  border: 2px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.template-btn:hover {
+  border-color: #0b3860;
+  color: #0b3860;
+}
+
+.template-btn.active {
+  background: #0b3860;
+  color: white;
+  border-color: #0b3860;
+}
+
+.template {
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.resume-header {
+  border-bottom: 2px solid #0b3860;
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+.resume-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: #0b3860;
+}
+
+.resume-header img {
+  max-width: 100px;
+  height: auto;
+  border-radius: 8px;
+}
+
+.template section {
+  margin-bottom: 20px;
+}
+
+.template h4 {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #0b3860;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #0b3860;
+  padding-bottom: 8px;
+}
+
+.template h3 {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.template ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.template li {
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.template a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.template a:hover {
+  text-decoration: underline;
+}
+
+.project {
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.code-link {
+  margin-top: 5px;
+  font-size: 12px;
+}
+
+.muted {
+  color: #666;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* Print styles */
+@media print {
+  .resume-builder-container {
+    height: auto;
+  }
+  
+  .template-selector {
+    display: none;
+  }
+  
+  .preview {
+    padding: 0;
+    background: white;
+  }
+}

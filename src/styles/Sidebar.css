@@ -1,0 +1,194 @@
+.sidebar {
+  width: 350px;
+  background: white;
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  border-right: 1px solid #e5e7eb;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #0b3860;
+}
+
+.sidebar section {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.sidebar section:last-child {
+  border-bottom: none;
+}
+
+.sidebar h3 {
+  font-size: 13px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.sidebar input,
+.sidebar textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.sidebar input:focus,
+.sidebar textarea:focus {
+  outline: none;
+  border-color: #0b3860;
+  box-shadow: 0 0 0 3px rgba(11, 56, 96, 0.1);
+}
+
+.sidebar label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 8px;
+  margin-bottom: 4px;
+  color: #666;
+}
+
+.image-preview {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.btn-remove {
+  width: 100%;
+  padding: 8px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.btn-remove:hover {
+  background: #dc2626;
+}
+
+.field-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.field-row input {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.field-row button {
+  padding: 8px 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  min-width: 35px;
+}
+
+.field-row button:hover {
+  background: #dc2626;
+}
+
+.sidebar > section > button {
+  width: 100%;
+  padding: 10px;
+  background: #0b3860;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.sidebar > section > button:hover {
+  background: #0a2d4a;
+}
+
+.export-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-export {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.btn-pdf {
+  background: #3b82f6;
+}
+
+.btn-pdf:hover {
+  background: #2563eb;
+}
+
+.btn-html {
+  background: #8b5cf6;
+}
+
+.btn-html:hover {
+  background: #7c3aed;
+}
+
+.btn-json {
+  background: #10b981;
+}
+
+.btn-json:hover {
+  background: #059669;
+}
+
+.export-message {
+  margin-top: 12px;
+  padding: 10px;
+  background: #d1fae5;
+  color: #065f46;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 50vh;
+    overflow-y: auto;
+    box-shadow: none;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+  }
+}
