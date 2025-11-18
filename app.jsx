@@ -1,7 +1,7 @@
-const { useState, useRef } = React;
+const { useState, useRef, useEffect } = React;
 
 function ResumeBuilder() {
-  const [template, setTemplate] = useState('corporate'); // 'corporate', 'modern', 'classic', 'minimal'
+  const [template, setTemplate] = useState('corporate');
   const [userImage, setUserImage] = useState(null);
 
   const [personal, setPersonal] = useState({
@@ -15,6 +15,8 @@ function ResumeBuilder() {
     maritalStatus: "Single",
     location: "New York, USA",
   });
+
+  const [about, setAbout] = useState("Professional with strong expertise in various domains. Dedicated to delivering quality work and achieving organizational goals. Excellent problem-solving abilities and communication skills.");
 
   const [skills, setSkills] = useState(["HTML", "CSS", "JavaScript","ReactJS","TailwindCSS","Python", "C (programming language)"]);
 
@@ -46,6 +48,7 @@ function ResumeBuilder() {
 
   const [strengths, setStrengths] = useState(["Problem-solving and analytical thinking", "Team collaboration & communication skills", "Quick learner and adaptable"]);
   const [hobbies, setHobbies] = useState(["Reading tech blogs", "Coding challenges", "Photography"]);
+  const [exportMessage, setExportMessage] = useState('');
 
   const previewRef = useRef();
 
@@ -53,38 +56,185 @@ function ResumeBuilder() {
     setPersonal(prev => ({ ...prev, [field]: value }));
   }
 
+  // Functional PDF Export using HTML to Canvas to PDF
   function exportToPDF() {
-    window.print();
+    const element = document.getElementById('resume-preview');
+    if (!element) {
+      alert('Resume preview not found');
+      return;
+    }
+
+    // Show loading message
+    setExportMessage('Generating PDF...');
+
+    // Create a canvas from the resume content
+    const opt = {
+      margin: 10,
+      filename: `${personal.name.replace(/\s+/g, '_')}_Resume.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+
+    // Use html2pdf library if available, otherwise use print
+    if (typeof html2pdf !== 'undefined') {
+      html2pdf().set(opt).from(element).save();
+      setExportMessage('PDF exported successfully!');
+      setTimeout(() => setExportMessage(''), 3000);
+    } else {
+      // Fallback to print method
+      const templateSelector = document.querySelector('.template-selector');
+      if (templateSelector) templateSelector.style.display = 'none';
+      
+      const controls = document.querySelector('.controls');
+      if (controls) controls.style.display = 'none';
+      
+      window.print();
+      
+      setTimeout(() => {
+        if (templateSelector) templateSelector.style.display = 'block';
+        if (controls) controls.style.display = 'block';
+        setExportMessage('Please save as PDF in the print dialog');
+        setTimeout(() => setExportMessage(''), 3000);
+      }, 500);
+    }
   }
 
-  function exportCorporateTemplate() {
-    // Store user data in localStorage so corporate-template.html can access it
-    localStorage.setItem('resumeData', JSON.stringify({
+  // Enhanced export functions using JavaScript
+  function exportAsJSON() {
+    const resumeData = {
       personal,
+      about,
       skills,
       education,
       projects,
       strengths,
       hobbies,
-      userImage
-    }));
-    // Open corporate template in new tab
-    window.open('corporate-template.html', '_blank');
+      userImage,
+      template,
+      exportedAt: new Date().toISOString()
+    };
+
+    const dataStr = JSON.stringify(resumeData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${personal.name.replace(/\s+/g, '_')}_Resume.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setExportMessage('Resume exported as JSON!');
+    setTimeout(() => setExportMessage(''), 3000);
   }
 
-  function exportModernTemplate() {
-    // Store user data in localStorage so modern-template.html can access it
-    localStorage.setItem('resumeData', JSON.stringify({
-      personal,
-      skills,
-      education,
-      projects,
-      strengths,
-      hobbies,
-      userImage
-    }));
-    // Open modern template in new tab
-    window.open('modern-template.html', '_blank');
+  function exportAsHTML() {
+    const htmlContent = generateHTMLResume();
+    const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(htmlBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${personal.name.replace(/\s+/g, '_')}_Resume.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setExportMessage('Resume exported as HTML!');
+    setTimeout(() => setExportMessage(''), 3000);
+  }
+
+  function generateHTMLResume() {
+    return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${personal.name} - Resume</title>
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    @media print { body { margin: 0; padding: 10px; } }
+  </style>
+</head>
+<body class="p-8 max-w-4xl mx-auto bg-white">
+  <header style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px;">
+    <div>
+      <h1 style="margin: 0; font-size: 32px; font-weight: bold;">${personal.name}</h1>
+      <p style="margin: 5px 0; color: #666;">${personal.handle}</p>
+    </div>
+    <div style="text-align: right; font-size: 14px;">
+      <div>${personal.email}</div>
+      <div>${personal.phone}</div>
+      <div>${personal.location}</div>
+      ${personal.github ? `<a href="${personal.github}" style="color: #0066cc; text-decoration: none;">GitHub</a>` : ''}
+      ${personal.linkedin ? `<div><a href="${personal.linkedin}" style="color: #0066cc; text-decoration: none;">LinkedIn</a></div>` : ''}
+    </div>
+  </header>
+
+  ${about ? `
+  <section style="margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 10px;">ABOUT</h2>
+    <p style="color: #555; line-height: 1.6;">${about}</p>
+  </section>
+  ` : ''}
+
+  ${skills && skills.length > 0 ? `
+  <section style="margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 10px;">SKILLS</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      ${skills.map(s => `<span style="background: #e5e7eb; padding: 5px 12px; border-radius: 4px; font-size: 14px;">${s}</span>`).join('')}
+    </div>
+  </section>
+  ` : ''}
+
+  ${education && education.length > 0 ? `
+  <section style="margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 10px;">EDUCATION</h2>
+    ${education.map(ed => `
+      <div style="margin-bottom: 10px;">
+        <div style="font-weight: bold;">${ed.title}</div>
+        <div style="color: #666; font-size: 14px;">${ed.meta}</div>
+      </div>
+    `).join('')}
+  </section>
+  ` : ''}
+
+  ${projects && projects.length > 0 ? `
+  <section style="margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 10px;">PROJECTS</h2>
+    ${projects.map(p => `
+      <div style="margin-bottom: 10px;">
+        <div style="font-weight: bold;">${p.title}</div>
+        <div style="color: #666; font-size: 14px;">${p.desc}</div>
+        ${p.code ? `<div style="font-size: 12px;"><a href="${p.code}" style="color: #0066cc; text-decoration: none;">Code: ${p.code}</a></div>` : ''}
+      </div>
+    `).join('')}
+  </section>
+  ` : ''}
+
+  ${strengths && strengths.length > 0 ? `
+  <section style="margin-bottom: 20px;">
+    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 10px;">STRENGTHS</h2>
+    <ul style="margin: 0; padding-left: 20px; line-height: 1.8;">
+      ${strengths.map(s => `<li>${s}</li>`).join('')}
+    </ul>
+  </section>
+  ` : ''}
+
+  ${hobbies && hobbies.length > 0 ? `
+  <section>
+    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 10px;">HOBBIES</h2>
+    <p style="color: #666;">${hobbies.join(', ')}</p>
+  </section>
+  ` : ''}
+</body>
+</html>
+    `;
   }
 
   function handleImageUpload(e) {
@@ -139,6 +289,13 @@ function ResumeBuilder() {
           </section>
 
           <section>
+            <h3>About</h3>
+            <div className="field-list">
+              <textarea placeholder="Write a brief professional summary about yourself" value={about} onChange={e => setAbout(e.target.value)} style={{minHeight: '100px', padding: '8px', borderRadius: '4px', border: '1px solid #ddd', fontFamily: 'inherit'}} />
+            </div>
+          </section>
+
+          <section>
             <h3>Skills</h3>
             <div className="field-list">
               {skills.map((s, i) => (
@@ -188,14 +345,15 @@ function ResumeBuilder() {
           </section>
 
           <div className="bottom-buttons">
-            <button onClick={exportToPDF}>Export / Print</button>
-            <button onClick={exportCorporateTemplate}>Corporate Template</button>
-            <button onClick={exportModernTemplate}>Modern Template</button>
-            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Top</button>
+            <button onClick={exportToPDF} style={{backgroundColor: '#3b82f6', color: 'white', padding: '10px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', marginBottom: '8px', width: '100%'}}>📄 Export as PDF</button>
+            <button onClick={exportAsHTML} style={{backgroundColor: '#8b5cf6', color: 'white', padding: '10px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', marginBottom: '8px', width: '100%'}}>🌐 Export as HTML</button>
+            <button onClick={exportAsJSON} style={{backgroundColor: '#10b981', color: 'white', padding: '10px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', marginBottom: '8px', width: '100%'}}>💾 Export as JSON</button>
+            <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{backgroundColor: '#6b7280', color: 'white', padding: '10px 20px', borderRadius: '6px', border: 'none', cursor: 'pointer', width: '100%'}}>⬆️ Top</button>
+            {exportMessage && <div style={{marginTop: '12px', padding: '10px', backgroundColor: '#d1fae5', color: '#065f46', borderRadius: '6px', fontSize: '12px', textAlign: 'center'}}>{exportMessage}</div>}
           </div>
         </aside>
 
-        <main className="preview" ref={previewRef}>
+        <main className="preview" ref={previewRef} id="resume-preview">
           <div className="template-selector">
             <button 
               className={`template-btn ${template === 'corporate' ? 'active' : ''}`}
@@ -221,20 +379,39 @@ function ResumeBuilder() {
           {/* HIDE OLD TEMPLATES WHEN MODERN IS SELECTED */}
           {template !== 'modern' && (
             <div className={`resume template-${template}`}>
-              <header className="resume-header">
-                {userImage && <img src={userImage} alt="user" />}
-                <div>
-                  <h1>{personal.name}</h1>
-                  <div className="header-meta">
-                    <div>{personal.email} • {personal.phone}</div>
-                    <div className="links">
-                      <div>{personal.handle}</div>
-                      <div><a href={personal.github} target="_blank" rel="noreferrer">{personal.github}</a></div>
-                      <div><a href={personal.linkedin} target="_blank" rel="noreferrer">{personal.linkedin}</a></div>
+              <header className="resume-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '20px' }}>
+                <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flex: 1 }}>
+                  {userImage && <img src={userImage} alt="user" />}
+                  <div>
+                    <h1>{personal.name}</h1>
+                    <div className="header-meta">
+                      <div>{personal.email} • {personal.phone}</div>
+                      <div className="links">
+                        <div>{personal.handle}</div>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginTop: '5px' }}>
+                  {personal.github && (
+                    <a href={personal.github} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: '#0066cc', fontSize: '20px', title: 'GitHub' }}>
+                      <i className="fab fa-github"></i>
+                    </a>
+                  )}
+                  {personal.linkedin && (
+                    <a href={personal.linkedin} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: '#0066cc', fontSize: '20px', title: 'LinkedIn' }}>
+                      <i className="fab fa-linkedin"></i>
+                    </a>
+                  )}
+                </div>
               </header>
+
+              <hr />
+
+              <section>
+                <h4>ABOUT</h4>
+                <p style={{color: '#555', lineHeight: '1.6', margin: '0'}}>{about}</p>
+              </section>
 
               <hr />
 
@@ -330,7 +507,7 @@ function ResumeBuilder() {
                     <div style={{ marginBottom: '30px' }}>
                       <h3 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', borderBottom: '2px solid #0b3860', paddingBottom: '8px', marginBottom: '15px', color: '#1f2937' }}>💼 PROFILE</h3>
                       <p style={{ fontSize: '13px', color: '#4b5563', lineHeight: '1.6', marginBottom: '0' }}>
-                        Professional with strong expertise in various domains. Dedicated to delivering quality work and achieving organizational goals. Excellent problem-solving abilities and communication skills.
+                        {about}
                       </p>
                     </div>
 
