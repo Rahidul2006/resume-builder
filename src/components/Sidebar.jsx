@@ -3,7 +3,7 @@ import '../styles/Sidebar.css'
 export default function Sidebar({
   personal, about, skills, education, projects, strengths, hobbies, userImage,
   updatePersonal, setAbout, setSkills, setEducation, setProjects, setStrengths, setHobbies,
-  handleImageUpload, clearImage, exportToPDF, exportAsHTML, exportAsJSON, exportMessage
+  handleImageUpload, clearImage, exportToPDF, isExporting, exportProgress
 }) {
   return (
     <aside className="sidebar">
@@ -79,10 +79,26 @@ export default function Sidebar({
       </section>
 
       <div className="export-buttons">
-        <button onClick={exportToPDF} className="btn-export btn-pdf">📄 Export PDF</button>
-        <button onClick={exportAsHTML} className="btn-export btn-html">🌐 Export HTML</button>
-        <button onClick={exportAsJSON} className="btn-export btn-json">💾 Export JSON</button>
-        {exportMessage && <div className="export-message">{exportMessage}</div>}
+        <button 
+          onClick={exportToPDF} 
+          className="btn-export btn-pdf"
+          disabled={isExporting}
+        >
+          📄 Export PDF
+        </button>
+        
+        {isExporting && (
+          <div className="export-modal">
+            <div className="export-modal-content">
+              <div className="export-spinner"></div>
+              <p className="export-status">{exportProgress}</p>
+            </div>
+          </div>
+        )}
+        
+        {!isExporting && exportProgress && (
+          <div className="export-message">{exportProgress}</div>
+        )}
       </div>
     </aside>
   )

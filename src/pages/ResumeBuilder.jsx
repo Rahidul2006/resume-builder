@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react'
-import axios from 'axios'
 import CorporateTemplate from '../components/CorporateTemplate'
 import ModernTemplate from '../components/ModernTemplate'
 import MinimalTemplate from '../components/MinimalTemplate'
@@ -9,7 +8,8 @@ import '../styles/ResumeBuilder.css'
 export default function ResumeBuilder() {
   const [template, setTemplate] = useState('corporate')
   const [userImage, setUserImage] = useState(null)
-  const [exportMessage, setExportMessage] = useState('')
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportProgress, setExportProgress] = useState('')
   const previewRef = useRef()
 
   const [personal, setPersonal] = useState({
@@ -75,10 +75,11 @@ export default function ResumeBuilder() {
     setUserImage(null)
   }
 
-  // Export to PDF via backend
+  // Export to PDF via backend with Puppeteer
   const exportToPDF = async () => {
     try {
-      setExportMessage('Generating PDF...')
+      setIsExporting(true)
+      setExportProgress('⏳ Preparing your resume...')
       
       const resumeData = {
         personal,
@@ -92,82 +93,59 @@ export default function ResumeBuilder() {
         template
       }
 
-      const response = await axios.post('/api/generate-pdf', resumeData, {
-        responseType: 'blob'
+      setExportProgress('📤 Sending to server...')
+
+      const response = await fetch('/export', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resumeData)
       })
 
+      if (!response.ok) {
+        let errorMessage = 'Failed to generate PDF'
+        try {
+          const errorData = await response.json()
+          errorMessage = errorData.message || errorData.error || errorMessage
+        } catch (e) {
+          // Response is not JSON, use default message
+        }
+        throw new Error(errorMessage)
+      }
+
+      setExportProgress('🔄 Generating PDF...')
+
       // Create download link
-      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
       link.setAttribute('download', `${personal.name.replace(/\s+/g, '_')}_Resume.pdf`)
       document.body.appendChild(link)
+      
+      setExportProgress('💾 Downloading...')
+      
       link.click()
       document.body.removeChild(link)
       window.URL.revokeObjectURL(url)
 
-      setExportMessage('PDF exported successfully!')
-      setTimeout(() => setExportMessage(''), 3000)
+      setExportProgress('✅ Download Complete!')
+      setTimeout(() => {
+        setIsExporting(false)
+        setExportProgress('')
+      }, 2000)
     } catch (error) {
       console.error('Error generating PDF:', error)
-      setExportMessage('Error generating PDF. Please try again.')
-      setTimeout(() => setExportMessage(''), 3000)
+      setExportProgress(`❌ Error: ${error.message}`)
+      setTimeout(() => {
+        setIsExporting(false)
+        setExportProgress('')
+      }, 3000)
     }
   }
 
-  const exportAsHTML = () => {
-    const htmlContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>${personal.name} - Resume</title>
-  <link href="https://cdn.tailwindcss.com" rel="stylesheet">
-</head>
-<body class="p-8 max-w-4xl mx-auto bg-white">
-  <header style="border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px;">
-    <h1 style="margin: 0; font-size: 32px; font-weight: bold;">${personal.name}</h1>
-    <p style="margin: 5px 0; color: #666;">${personal.email} • ${personal.phone}</p>
-  </header>
-  <section style="margin-bottom: 20px;">
-    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px;">ABOUT</h2>
-    <p>${about}</p>
-  </section>
-  <section style="margin-bottom: 20px;">
-    <h2 style="font-size: 18px; font-weight: bold; border-bottom: 2px solid #333; padding-bottom: 8px;">SKILLS</h2>
-    <p>${skills.join(', ')}</p>
-  </section>
-</body>
-</html>
-    `
-    const blob = new Blob([htmlContent], { type: 'text/html' })
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${personal.name.replace(/\s+/g, '_')}_Resume.html`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
-    setExportMessage('HTML exported successfully!')
-    setTimeout(() => setExportMessage(''), 3000)
-  }
 
-  const exportAsJSON = () => {
-    const data = { personal, about, skills, education, projects, strengths, hobbies, userImage }
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
-    const url = window.URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${personal.name.replace(/\s+/g, '_')}_Resume.json`
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
-    setExportMessage('JSON exported successfully!')
-    setTimeout(() => setExportMessage(''), 3000)
-  }
 
   const renderTemplate = () => {
     switch(template) {
@@ -201,9 +179,8 @@ export default function ResumeBuilder() {
         handleImageUpload={handleImageUpload}
         clearImage={clearImage}
         exportToPDF={exportToPDF}
-        exportAsHTML={exportAsHTML}
-        exportAsJSON={exportAsJSON}
-        exportMessage={exportMessage}
+        isExporting={isExporting}
+        exportProgress={exportProgress}
       />
       <main className="preview" ref={previewRef} id="resume-preview">
         <div className="template-selector">
