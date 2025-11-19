@@ -26,9 +26,6 @@
 > Update these commands to match your project (npm / pnpm / yarn)
 
 ```bash
-# clone repo
-git clone https://github.com/<your-username>/resume-builder.git
-cd resume-builder
 
 # install deps
 npm install
