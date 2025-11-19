@@ -15,13 +15,13 @@ export default function ResumeBuilder() {
   const [personal, setPersonal] = useState({
     name: "RAHIDUL KHAN",
     email: "krahidul869@gmail.com",
-    phone: "+91 9832577462",
+    phone: "+91 98******62",
     github: "https://github.com/Rahidul2006",
     linkedin: "https://www.linkedin.com/in/rahidul-khan-6a3922269",
     handle: "@Rahidul2006",
-    birthDate: "01/15/1990",
+    birthDate: "01/09/2006",
     maritalStatus: "Single",
-    location: "New York, USA",
+    location: "Kolkata, India",
   })
 
   const [about, setAbout] = useState("Professional with strong expertise in various domains. Dedicated to delivering quality work and achieving organizational goals. Excellent problem-solving abilities and communication skills.")
