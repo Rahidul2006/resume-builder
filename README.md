@@ -4,14 +4,56 @@
 
 > Build a resume in minutes, export to PDF, and customize templates to match your style.
 
-## Files in this folder:
-  - `index.html` — demo page that loads `app.jsx` via Babel in the browser.
-  - `app.jsx` — main React component (ResumeBuilder) built to run in the browser.
-  - `styles.css` — minimal stylesheet for layout and print styles.
-  - `server.js` — tiny Node static server to serve files locally.
-  - `package.json` — contains `npm run vdev` to start the server.
-  - `tempCodeRunnerFile_backup.jsx` — backup of the original JSX source.
+## Features
 
+* Responsive resume templates (Corporate / Modern / Minimal)
+* Live preview of resume content
+* Export to PDF (client-side or server-side)
+
+## Folder structure
+
+```
+/ (project root)
+├─ backend/                # Backend code (Express + Puppeteer)
+├─ public/                 # static assets (images, fonts)
+├─ src/                    # frontend source
+├─ corporate-template.html
+├─ modern-template.html
+├─ minimal-resume.html
+├─ index.html
+└─ README.md
+```
+
+## Requirements
+
+* Node.js (v16+)
+* npm
+
+## Quick setup
+
+```bash
+git clone https://github.com/Rahidul2006/resume-builder.git
+cd resume-builder
+npm install
+```
+
+
+
+## Export to PDF
+
+Two options:
+
+### A — Client-side (quick)
+
+Add html2pdf and call it on the preview container. Good for quick downloads.
+
+### B — Server-side (high fidelity)
+
+Use Puppeteer in `backend/` to render HTML and generate an A4 PDF with `printBackground: true`.
+
+## Templates
+
+Edit the HTML template files in the repo to change layout and placeholders.
 
 ## 🛠️ Tech Stack
 
@@ -26,9 +68,6 @@
 > Update these commands to match your project (npm / pnpm / yarn)
 
 ```bash
-# clone repo
-git clone https://github.com/<your-username>/resume-builder.git
-cd resume-builder
 
 # install deps
 npm install
@@ -59,6 +98,7 @@ Choose a template.
 Edit sections: Contact, Summary, Experience, Education, Skills, Projects.
 
 Use “Export → PDF” to download your resume.
+
 
 
 
